@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>診断テスト</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .question { margin-bottom: 10px; }
+        canvas { max-width: 400px; margin: 20px auto; }
+        button { margin-top: 10px; padding: 10px 20px; }
+    </style>
+</head>
+<body>
+
+    <h2>診断テスト</h2>
+
+    <div id="questions">
+        <div class="question">
+            <p>1. あなたは新しいことに挑戦するのが好きですか？</p>
+            <select class="answer" data-category="A">
+                <option value="1">1（全くそう思わない）</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5" selected>5（とてもそう思う）</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>2. あなたは人と協力するのが得意ですか？</p>
+            <select class="answer" data-category="B">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>3. あなたは論理的に物事を考えるのが得意ですか？</p>
+            <select class="answer" data-category="C">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5" selected>5</option>
+            </select>
+        </div>
+    </div>
+
+    <button onclick="calculateScores()">診断する</button>
+
+    <canvas id="resultChart"></canvas>
+
+    <script>
+        function calculateScores() {
+            let scores = { A: 0, B: 0, C: 0 };
+            let counts = { A: 0, B: 0, C: 0 };
+
+            document.querySelectorAll(".answer").forEach(select => {
+                let category = select.dataset.category;
+                let value = parseInt(select.value);
+                scores[category] += value;
+                counts[category]++;
+            });
+
+            let averages = {
+                A: scores.A / counts.A,
+                B: scores.B / counts.B,
+                C: scores.C / counts.C
+            };
+
+            drawChart(averages);
+        }
+
+        function drawChart(averages) {
+            let ctx = document.getElementById("resultChart").getContext("2d");
+            new Chart(ctx, {
+                type: "radar",
+                data: {
+                    labels: ["チャレンジ力", "協力力", "論理力"],
+                    datasets: [{
+                        label: "診断結果",
+                        data: [averages.A, averages.B, averages.C],
+                        backgroundColor: "rgba(0, 123, 255, 0.2)",
+                        borderColor: "rgba(0, 123, 255, 1)",
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    scale: {
+                        ticks: { beginAtZero: true, max: 5 }
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
